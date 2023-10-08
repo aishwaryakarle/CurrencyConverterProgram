@@ -1,0 +1,92 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import org.json.JSONObject;
+
+public class CurrencyConverter {
+Scanner sc=new Scanner(System.in);
+    ArrayList<String> arr=new ArrayList<String>(3);
+public void add() {
+   for(int i=0;i<4;i++) {
+    arr.add(sc.nextLine());
+    }
+}
+public void check() {
+    System.out.println(arr);
+}
+public void convertcurrency() throws IOException, InterruptedException {
+   System.out.println("From");
+   String from=sc.nextLine();
+   System.out.println("To");
+   String to=sc.nextLine();
+   System.out.println("You want to convert Currency from"+" "+from+" "+"to"+to);
+   String accesskey="7b2c83069a5530a38f7ee366464a353a";
+   int amount =10;
+   String endpoint="convert";
+   String geturl="http://api.exchangeratesapi.io/v1/latest"+"?access_key=" + accesskey +"&from=" + from + "&to=" + to + "&amount=" + amount;
+   URL url = new URL(geturl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+       
+        connection.setRequestMethod("GET");
+       
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+        StringBuilder response = new StringBuilder();
+
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+
+            response.append(line);
+
+        }
+        reader.close();
+       
+        JSONObject jsonResponse = new JSONObject(response.toString());
+       
+        double conversionResult = jsonResponse.getJSONObject("rates").getDouble(from);
+        
+        System.out.println("Conversion Result: " + conversionResult);
+        System.out.println(amount+from+" = "+amount/conversionResult + to);
+       
+        connection.disconnect();
+
+    }  
+   
+public static void main(String[] args) throws IOException, InterruptedException {
+
+Scanner sc=new Scanner(System.in);
+CurrencyConverter obj=new CurrencyConverter();
+while(true) {
+     System.out.println("Enter choice: 1:AddList 2:checkList 3:UpdateList 4:ConvertCurrency");
+     int choice=sc.nextInt();
+     switch(choice) {
+     case 1:
+    System.out.println("Add your Favorite CurrencyList:");
+    obj.add();
+    break;
+     case 2:
+    System.out.println("check your Favorite CurrencyList:");
+    obj.check();
+    break;
+     case 3:
+    System.out.println("Update your Favorite CurrencyList:");
+    break;
+case 4:
+    System.out.println("Select the Currency You Want To Convert:");
+    System.out.println(obj.arr);
+    obj.convertcurrency();
+    break;
+     }
+}
+}
+}
